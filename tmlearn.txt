@@ -1,0 +1,217 @@
+GPU2D
+
+GPUImpl
+tom5454 edited this page Jan 24, 2024 · 4 revisions
+GPU
+
+This is the default GPU context available through the GPU Peripheral, Image.gpuDraw or createWindow function.
+Color
+
+Color values can be entered in multiple ways:
+
+    single ARGB number: 0xAARRGGBB
+    three channels as three separate arguments: R, G, B
+    four channels as four separate arguments: R, G, B, A
+
+VRAM
+
+The GPU Peripheral has an internal buffer for processing called VRAM.
+Every operation that works with large amount of data uses this buffer.
+The maximum size of this buffer is configurable in the mod's config file with the maxVRAMSize setting.
+It has nothing to do with the actual VRAM of the computer
+Window
+
+Windows are a separate GPU context that can be moved, hidden or resized.
+Each window has it's own internal buffer, so it uses VRAM based on it's size.
+The buffer can be drawn using the sync function.
+Multiple windows can be layered on top of each other by changing the order of the sync calls.
+createWindow(x, y, w, h)
+
+Create a window with a normal GPU context
+createWindow3D(x, y, width, height)
+
+Create a window with a 3D GPU context
+See GPU3D
+sync()
+
+Draw the window buffer into the parent context or update the monitors on the GPU Peripheral.
+Utility functions
+decodeImage(input...)
+
+The function accepts unpacked numbers or buffer references. Returns the decoded image or throws an error if the image is corrupted or too big
+getUsedMemory()
+
+Returns the currently used VRAM by the GPU
+newImage(width, height)
+
+Creates a new image with the defined size
+newBuffer([initial size])
+
+Creates a new byte buffer with the given initial size or 32 bytes as the default.
+imageFromBuffer(width, pixels...)
+
+Creates an image with an unpacked ARGB pixels buffer
+getMaxMemory()
+
+Returns the maximum available VRAM
+getBounds()
+
+Returns the Window bounds object if the context was created using createWindow
+getSize()
+
+Returns the context size in pixels
+Graphics functions
+filledRectangle(x, y, width, height, color)
+
+Draw filled rectangle
+rectangle(x, y, width, height, color)
+
+Draw a rectangle outline
+lineS(x1, y1, x2, y2, color)
+
+Draw a smooth line between two points
+setFont(name)
+getFont()
+drawText(x, y, text, [text color], [bg color], [size], [padding])
+drawTextSmart(x, y, text, [text color], [bg color], [force unicode], [size], [padding])
+freeChars()
+drawChar(x, y, char, [text color], [bg color], [size])
+clearChars()
+delChar(char)
+drawBuffer(x, y, image width, scale, argb pixels...)
+drawImage(x, y, image ref)
+addNewChar(char, width, char data...x16)
+getTextLength(text, [size], [padding])
+getFontDefaultCharID()
+setFontDefaultCharID(id)
+fill([color])
+
+Fills the whole window to a single color, color value defaults to black.
+line(x1, y1, x2, y2, color)
+Draw a line between two points
+
+GPU3D
+
+GPU3D
+tom5454 edited this page Nov 5, 2023 · 2 revisions
+GPU3D
+
+A special GPU context capable of drawing 3D scenes. Use the render function to finish drawing the current frame.
+Don't forget the sync to send the output buffer to the default GPU context.
+glDirLight(x, y, z)
+glFrustum(fov, zNear, zFar)
+render()
+
+Render the 3D scene into the window buffer.
+glVertex(x, y, z)
+glTexCoord(u, v)
+glPushMatrix()
+glBegin([mode])
+glColor(color)
+glLoadIdentity()
+glTranslate(x, y, z)
+glPopMatrix()
+glEnd()
+glDeleteTextures(ids...)
+glDisable(id)
+glGenTextures([num])
+glScale(x, y, z)
+glRotate(angle, x, y, z)
+glEnable(id)
+glBindTexture(id)
+glTexImage(image)
+sync()
+
+Sync the Window
+clear()
+getBounds()
+getConstants()
+
+Return all constants
+
+local glc = {}
+local allConst = { gl.getConstants() }
+for i=1,#allConst/2 do
+	glc[allConst[i * 2 - 1]] = allConst[i * 2]
+end
+-- Usage example: glc.GL_TEXTURE_2D
+
+Pages 10
+
+Tom's Peripherals Wiki
+
+    Home
+    Peripherals
+        GPU
+        Redstone Port
+        Watch Dog Timer
+        Keyboard
+    APIs
+        GPU2D
+        GPU3D
+        Image
+        ByteBuffer
+
+Clone this wiki locally
+Footer
+
+LuaImage
+
+LuaImage
+tom5454 edited this page Nov 1, 2023 · 1 revision
+LuaImage
+getWidth()
+
+Returns the image width
+getHeight()
+
+Returns the image height
+getRGB(x, y)
+
+Returns the color of the pixel at x and y coordinates
+saveImage()
+
+Saves the image into a ByteBuffer. Returns the ByteBuffer
+getAsBuffer()
+
+Returns the image pixels as an unpacked ARGB numbers
+
+local pixels = { image.getAsBuffer() }
+
+--values are available with pixels[x + image.getWidth() * (y - 1)]
+
+setRGB(x, y, Color)
+
+Set the color value of the pixel at x and y
+See: Color arguments
+gpuDraw()
+
+Returns a GPU context where output is drawn onto this image.
+free()
+
+Removes the image from the used VRAM amount and marks the image invalid.
+ref()
+Returns a string reference to the image.
+The reference is only usable on the same peripheral.
+
+LuaByteBuffer
+
+length()
+
+Returns all of the readable bytes in this buffer.
+write(values...)
+
+Writes the bytes into the buffer, each parameter is parsed as a single unsigned byte (0-255).
+read([amount])
+
+Reads the amount of bytes from the buffer and returns it as unpacked values.
+The amount defaults to 1. Negative numbers read all of the available bytes.
+available()
+
+Returns the remaining readable bytes in this buffer.
+free()
+
+Removes the buffer from the used VRAM amount and marks the buffer invalid.
+ref()
+Returns a string reference to the buffer.
+The reference is only usable on the same peripheral.
